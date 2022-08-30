@@ -22,10 +22,11 @@ import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 public class MainActivity extends Activity implements MonitorNotifier {
     protected static final String TAG = "UserMonitor";
-
+    protected static final String uuid = "2eadb97e-1dd2-11b2-8000-080027b246c5";
     //權限
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
@@ -95,24 +96,25 @@ public class MainActivity extends Activity implements MonitorNotifier {
 
             }
         }
-        Beacon beacon = new Beacon.Builder()
-                .setId1("2eadb97e-1dd2-11b2-8000-080027b246c5")
-                .setId2("1")
-                .setId3("2")
-                .setManufacturer(0x4C00) // Radius Networks.  Change this for other beacon layouts
-                .setTxPower(-55)
-                .setDataFields(Arrays.asList(new Long[]{0l})) // Remove this for beacon layouts without d: fields
-                .build();
-        BeaconParser beaconParser = new BeaconParser()
-                .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"); //ibeacon -> 0215
-        BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
-        beaconTransmitter.startAdvertising(beacon);
+
     }
 
     //持續執行
     protected void onResume() {
         super.onResume();
+        Beacon beacon = new Beacon.Builder()
+                .setId1(uuid)
+                .setId2("1")
+                .setId3("2")
+                .setManufacturer(0x004C) // Radius Networks.  Change this for other beacon layouts
+                .setTxPower(-40)
+                .setDataFields(Arrays.asList(new Long[]{0l})) // Remove this for beacon layouts without d: fields
+                .build();
+        BeaconParser beaconParser = new BeaconParser()
+                .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"); //ibeacon -> 0215
 
+        BeaconTransmitter beaconTransmitter = new BeaconTransmitter(getApplicationContext(), beaconParser);
+        beaconTransmitter.startAdvertising(beacon);
 
     }
 
