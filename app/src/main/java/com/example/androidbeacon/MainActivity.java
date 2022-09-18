@@ -1,28 +1,27 @@
 package com.example.androidbeacon;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.bluetooth.le.AdvertiseCallback;
-import android.bluetooth.le.AdvertiseSettings;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.BeaconTransmitter;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 public class MainActivity extends Activity implements MonitorNotifier {
     protected static final String TAG = "UserMonitor";
@@ -31,11 +30,24 @@ public class MainActivity extends Activity implements MonitorNotifier {
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
 
+    private static final int REQUEST_CODE = 1;
+    protected String major = "1";
+    protected String minor = "1";
+
+
+    TextView BeaconMsg;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        BeaconMsg = (TextView) findViewById(R.id.BeaconMsg);
+
+        BeaconMsg.setText("Major: "+major+"Minor : "+minor);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -96,7 +108,15 @@ public class MainActivity extends Activity implements MonitorNotifier {
 
             }
         }
+    }
 
+
+    public void onSettingBeaconClicked(View view) {
+        Intent myIntent = new Intent(MainActivity.this, SettingBeacon.class);
+        myIntent.putExtra("major", major);
+        myIntent.putExtra("minor", minor);
+
+        startActivity(myIntent);
     }
 
     //持續執行
@@ -104,8 +124,8 @@ public class MainActivity extends Activity implements MonitorNotifier {
         super.onResume();
         Beacon beacon = new Beacon.Builder()
                 .setId1(uuid)
-                .setId2("1")
-                .setId3("2")
+                .setId2(major)
+                .setId3(minor)
                 .setManufacturer(0x004C) // Radius Networks.  Change this for other beacon layouts
                 .setTxPower(-40)
                 .setDataFields(Arrays.asList(new Long[]{0l})) // Remove this for beacon layouts without d: fields
